@@ -18,6 +18,8 @@ describe OmniAuth::Strategies::Tequila, type: :strategy do
     it 'points to the EPFL server over SSL' do
       should include('ssl' => true)
       should include('host' => 'tequila.epfl.ch')
+      should include('require_group', 'my-group')
+      should include('service_name', 'Omniauth')
       should include('port' => nil)
       should include('path' => '/cgi-bin/tequila')
       should include('uid_field' => :uniqueid)

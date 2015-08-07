@@ -36,6 +36,8 @@ end
 OmniAuth Tequila authenticates with the EPFL server over SSL by default. However, it supports the following configuration options:
 
   * `host` - Defines the host of your Tequila server
+  * `require_group` - Defines the group that will have access to the service
+  * `service_name` - Define the name the service will authenticate with to tequila
   * `path` - Defines the URL relative to the host that the application sits behind
   * `port` - The port to use for your configured Tequila `host`
   * `ssl` - true to connect to your Tequila server over SSL
