@@ -18,7 +18,7 @@ EOF
   gem.require_paths = ['lib']
   gem.version       = Omniauth::Tequila::VERSION
 
-  gem.add_dependency 'omniauth',                '~> 1.2.0'
+  gem.add_dependency 'omniauth',                '>= 1.2.0'
   gem.add_dependency 'addressable',             '~> 2.3'
 
   gem.add_development_dependency 'rake',        '~> 0.9'
