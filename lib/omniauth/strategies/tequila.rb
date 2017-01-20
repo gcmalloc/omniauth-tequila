@@ -14,7 +14,7 @@ module OmniAuth
       option :name, :tequila # Required property by OmniAuth::Strategy
 
       option :host, 'tequila.epfl.ch'
-      option :require_group, 'my-group'
+      option :require_group, nil
       option :service_name, 'Omniauth'
       option :port, nil
       option :path, '/cgi-bin/tequila'
@@ -95,7 +95,10 @@ module OmniAuth
         # NB: You might want to set the service and required group yourself.
         request_fields = @options[:request_info].values << @options[:uid_field]
         body = 'urlaccess=' + callback_url + "\nservice=" + @options[:service_name] + "\n" +
-          'request=' + request_fields.join(',') + "\nrequire=group=" + @options[:require_group]
+          'request=' + request_fields.join(',') 
+        if @options[:require_group] 
+          body += "\nrequire=group=" + @options[:require_group]
+        end
         tequila_post '/createrequest', body
       end
 
