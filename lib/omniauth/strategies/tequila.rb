@@ -21,6 +21,7 @@ module OmniAuth
       option :ssl, true
       option :uid_field, :uniqueid
       option :request_info, { :name => 'displayname' }
+      option :additional_parameters, {}
 
       # As required by https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
       info do
@@ -95,10 +96,13 @@ module OmniAuth
         # NB: You might want to set the service and required group yourself.
         request_fields = @options[:request_info].values << @options[:uid_field]
         body = 'urlaccess=' + callback_url + "\nservice=" + @options[:service_name] + "\n" +
-          'request=' + request_fields.join(',') 
-        if @options[:require_group] 
+          'request=' + request_fields.join(',')
+        if @options[:require_group]
           body += "\nrequire=group=" + @options[:require_group]
         end
+
+        @options[:additional_parameters].each { |param, value| body += "\n" + param + "=" + value}
+        
         tequila_post '/createrequest', body
       end
 
