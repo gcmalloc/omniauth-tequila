@@ -18,7 +18,7 @@ describe OmniAuth::Strategies::Tequila, type: :strategy do
     it 'points to the EPFL server over SSL' do
       should include('ssl' => true)
       should include('host' => 'tequila.epfl.ch')
-      should include('require_group' => 'my-group')
+      should include('require_group' => nil)
       should include('service_name' => 'Omniauth')
       should include('port' => nil)
       should include('path' => '/cgi-bin/tequila')
@@ -62,7 +62,7 @@ describe OmniAuth::Strategies::Tequila, type: :strategy do
       subject { last_response }
       it { should be_redirect }
       it 'should redirect to the Tequila server' do
-        subject.headers['Location'].should == 'http://tequila.example.org:8080/application/path/requestauth?' + 
+        subject.headers['Location'].should == 'http://tequila.example.org:8080/application/path/requestauth?' +
           'requestkey=shkfe31zsy3ow7sgnfv2e2q164cbf1to'
       end
     end
