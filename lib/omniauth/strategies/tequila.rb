@@ -1,5 +1,6 @@
 require 'omniauth/strategy'
 require 'addressable/uri'
+require 'net/http'
 
 module OmniAuth
   module Strategies
