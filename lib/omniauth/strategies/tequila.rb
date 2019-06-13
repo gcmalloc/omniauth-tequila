@@ -35,11 +35,7 @@ module OmniAuth
       end
 
       uid do
-	uid = raw_info[ @options[:uid_field].to_s ]
-	if uid.end_with? '@epfl.ch'
-	  uid.delete_suffix '@epfl.ch'
-	end
-	uid
+	raw_info[ @options[:uid_field].to_s ]
       end
 
       def callback_phase
@@ -62,6 +58,11 @@ module OmniAuth
           log :error, 'Missing attributes in Tequila server response: ' + missing_info.join(', ')
           return fail!(:invalid_info, TequilaFail.new('Invalid info from Tequila'))
         end
+
+	# Normalize UID for EPFL
+	if auth_hash.uid.end_with? '@epfl.ch'
+	  auth_hash.uid.delete_suffix '@epfl.ch'
+	end
 
         super
       end
