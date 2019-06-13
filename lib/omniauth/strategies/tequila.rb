@@ -22,6 +22,7 @@ module OmniAuth
       option :ssl, true
       option :uid_field, :uniqueid
       option :request_info, { :name => 'displayname' }
+      option :switchaai, false
       option :additional_parameters, {}
 
       # As required by https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
@@ -34,7 +35,11 @@ module OmniAuth
       end
 
       uid do
-        raw_info[ @options[:uid_field].to_s ]
+	uid = raw_info[ @options[:uid_field].to_s ]
+	if uid.end_with? '@epfl.ch'
+	  uid.delete_suffix '@epfl.ch'
+	end
+	uid
       end
 
       def callback_phase
