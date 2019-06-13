@@ -108,6 +108,10 @@ module OmniAuth
           body += "\nrequire=group=" + @options[:require_group]
         end
 
+        if @options[:switchaai]
+          body += "\nallows=categorie=shibboleth"
+        end
+
         @options[:additional_parameters].each { |param, value| body += "\n" + param + "=" + value}
         
         tequila_post '/createrequest', body
