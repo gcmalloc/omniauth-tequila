@@ -60,10 +60,8 @@ module OmniAuth
         end
 
 	# Normalize UID for EPFL
-	log :info, 'Checking uid suffix...'
 	if auth_hash.uid.end_with? '@epfl.ch'
-	  log :info, 'Suffix found'
-	  auth_hash.uid.delete_suffix '@epfl.ch'
+	  auth_hash.uid.delete_suffix! '@epfl.ch'
 	end
 
         super
