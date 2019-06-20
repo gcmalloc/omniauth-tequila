@@ -46,6 +46,8 @@ OmniAuth Tequila authenticates with the EPFL server over SSL by default. However
   * `uid_field` - The user data attribute to use as your user's unique identifier. Defaults to `'uniqueid'` (which contains the user's SCIPER number when using EPFL's Tequila server)
   * `request_info` - Hash that maps user attributes from Tequila to the [OmniAuth schema][omniauth_schema]. Defaults to `{ :name => 'displayname' }` (which is the user's full name when using EPFL's Tequila server)
   * `additional_parameters` - Hash that takes key - value pairs for any other parameter than those listed above. Defaults to `{}` (Empty hash)
+  * `additional_parameters` - Hash that takes key - value pairs for any other parameter than those listed above. Defaults to `{}` (Empty hash)
+  * `switchaai` - true to enable switchaai login. Defaults to `false`.
 
 If you encounter problems wih SSL certificates you may want to set the `ca_path` parameter or activate `disable_ssl_verification` (not recommended).
 

@@ -1,8 +1,10 @@
 rvm:
-  - 1.9.2
-  - 1.9.3
+  - 2.3.8
+  - 2.5.5
+  - 2.6.3
 branches:
   only:
     - master
+    - develop
 before_install:
   - gem install bundler

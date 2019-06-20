@@ -22,7 +22,7 @@ EOF
   gem.add_dependency 'addressable',             '~> 2.3'
 
   gem.add_development_dependency 'rake',        '~> 0.9'
-  gem.add_development_dependency 'webmock',     '~> 1.8.11'
+  gem.add_development_dependency 'webmock',     '~> 2.3.2'
   gem.add_development_dependency 'simplecov',   '~> 0.7.1'
   gem.add_development_dependency 'rspec',       '~> 2.11'
   gem.add_development_dependency 'rack-test',   '~> 0.6'

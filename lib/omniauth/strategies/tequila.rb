@@ -1,5 +1,6 @@
 require 'omniauth/strategy'
 require 'addressable/uri'
+require 'net/http'
 
 module OmniAuth
   module Strategies
@@ -21,6 +22,7 @@ module OmniAuth
       option :ssl, true
       option :uid_field, :uniqueid
       option :request_info, { :name => 'displayname' }
+      option :switchaai, false
       option :additional_parameters, {}
 
       # As required by https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
@@ -33,7 +35,7 @@ module OmniAuth
       end
 
       uid do
-        raw_info[ @options[:uid_field].to_s ]
+	raw_info[ @options[:uid_field].to_s ]
       end
 
       def callback_phase
@@ -56,6 +58,11 @@ module OmniAuth
           log :error, 'Missing attributes in Tequila server response: ' + missing_info.join(', ')
           return fail!(:invalid_info, TequilaFail.new('Invalid info from Tequila'))
         end
+
+	# Normalize UID for EPFL
+	if auth_hash.uid.end_with? '@epfl.ch'
+	  auth_hash.uid.delete_suffix! '@epfl.ch'
+	end
 
         super
       end
@@ -99,6 +106,10 @@ module OmniAuth
           'request=' + request_fields.join(',')
         if @options[:require_group]
           body += "\nrequire=group=" + @options[:require_group]
+        end
+
+        if @options[:switchaai]
+          body += "\nallows=categorie=shibboleth"
         end
 
         @options[:additional_parameters].each { |param, value| body += "\n" + param + "=" + value}
