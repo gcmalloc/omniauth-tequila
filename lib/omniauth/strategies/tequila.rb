@@ -55,7 +55,7 @@ module OmniAuth
 
         missing_info = @options[:request_info].values.reject { |k| raw_info.include?(k) }
         if !missing_info.empty?
-          log :error, 'Missing attributes in Tequila server response: ' + missing_info.join(', ')
+          log :error, 'Missing attributes in Tequila server response: ' + missing_info.join(', ') + ', found instead: ' + raw_info.to_s
           return fail!(:invalid_info, TequilaFail.new('Invalid info from Tequila'))
         end
 
