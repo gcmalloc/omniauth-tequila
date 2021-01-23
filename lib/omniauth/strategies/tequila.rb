@@ -102,19 +102,36 @@ module OmniAuth
       def get_request_key
         # NB: You might want to set the service and required group yourself.
         request_fields = @options[:request_info].values << @options[:uid_field]
-        body = 'urlaccess=' + callback_url + "\nservice=" + @options[:service_name] + "\n" +
-          'request=' + request_fields.join(',')
+        body_fields = [
+          "urlaccess" => callback_url,
+          "service"   => @options[:service_name],
+          "request"   => request_fields.join(',')
+        ]
+
         if @options[:require_group]
-          body += "\nrequire=group=" + @options[:require_group]
+          body_fields.push ["require" => "group=" + @options[:require_group]]
         end
 
         if @options[:switchaai]
-          body += "\nallows=categorie=shibboleth"
+          body_fields.push ["allows" => "categorie=shibboleth"]
         end
 
-        @options[:additional_parameters].each { |param, value| body += "\n" + param + "=" + value}
+        body_fields.push additional_requestauth_parameters
         
-        tequila_post '/createrequest', body
+        tequila_post '/createrequest', encode_request_body(body_fields)
+      end
+
+      def encode_request_body( body_fields )
+        if (body_fields.kind_of?(Array))
+          return body_fields.map { |fields| encode_request_body(fields) }.join('')
+        end
+        body = ""
+        body_fields.each { |param, value| body += param + "=" + value + "\n" }
+        body
+      end
+
+      def additional_requestauth_parameters
+        @options[:additional_parameters]
       end
 
       # Build a Tequila host with protocol and port
