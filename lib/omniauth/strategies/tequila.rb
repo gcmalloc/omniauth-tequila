@@ -23,7 +23,9 @@ module OmniAuth
       option :uid_field, :uniqueid
       option :request_info, { :name => 'displayname' }
       option :switchaai, false
-      option :additional_parameters, {}
+      option :additional_parameters, {}  ## OBSOLETE, please use the next one
+      option :additional_requestauth_parameters, {}
+      option :additional_fetchattributes_parameters, {}
 
       # As required by https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
       info do
@@ -95,7 +97,11 @@ module OmniAuth
 
       # retrieves user attributes from the Tequila server
       def fetch_attributes( request_key )
-        tequila_post '/fetchattributes', "key=" + request_key
+        body = encode_request_body([
+                                     {"key" => request_key},
+                                     additional_fetchattributes_parameters
+                                   ])
+        tequila_post '/fetchattributes', body
       end
 
       # retrieves the request key from the Tequila server
@@ -131,7 +137,13 @@ module OmniAuth
       end
 
       def additional_requestauth_parameters
-        @options[:additional_parameters]
+        @options[:additional_requestauth_parameters].empty? ?
+          @options[:additional_parameters]                  :
+          @options[:additional_requestauth_parameters]
+      end
+
+      def additional_fetchattributes_parameters
+        @options[:additional_fetchattributes_parameters]
       end
 
       # Build a Tequila host with protocol and port
