@@ -23,7 +23,9 @@ module OmniAuth
       option :uid_field, :uniqueid
       option :request_info, { :name => 'displayname' }
       option :switchaai, false
-      option :additional_parameters, {}
+      option :additional_parameters, {}  ## OBSOLETE, please use the next one
+      option :additional_requestauth_parameters, {}
+      option :additional_fetchattributes_parameters, {}
 
       # As required by https://github.com/intridea/omniauth/wiki/Auth-Hash-Schema
       info do
@@ -55,7 +57,7 @@ module OmniAuth
 
         missing_info = @options[:request_info].values.reject { |k| raw_info.include?(k) }
         if !missing_info.empty?
-          log :error, 'Missing attributes in Tequila server response: ' + missing_info.join(', ')
+          log :error, 'Missing attributes in Tequila server response: ' + missing_info.join(', ') + ', found instead: ' + raw_info.to_s
           return fail!(:invalid_info, TequilaFail.new('Invalid info from Tequila'))
         end
 
@@ -95,26 +97,53 @@ module OmniAuth
 
       # retrieves user attributes from the Tequila server
       def fetch_attributes( request_key )
-        tequila_post '/fetchattributes', "key=" + request_key
+        body = encode_request_body([
+                                     {"key" => request_key},
+                                     additional_fetchattributes_parameters
+                                   ])
+        tequila_post '/fetchattributes', body
       end
 
       # retrieves the request key from the Tequila server
       def get_request_key
         # NB: You might want to set the service and required group yourself.
         request_fields = @options[:request_info].values << @options[:uid_field]
-        body = 'urlaccess=' + callback_url + "\nservice=" + @options[:service_name] + "\n" +
-          'request=' + request_fields.join(',')
+        body_fields = [
+          "urlaccess" => callback_url,
+          "service"   => @options[:service_name],
+          "request"   => request_fields.join(',')
+        ]
+
         if @options[:require_group]
-          body += "\nrequire=group=" + @options[:require_group]
+          body_fields.push ["require" => "group=" + @options[:require_group]]
         end
 
         if @options[:switchaai]
-          body += "\nallows=categorie=shibboleth"
+          body_fields.push ["allows" => "categorie=shibboleth"]
         end
 
-        @options[:additional_parameters].each { |param, value| body += "\n" + param + "=" + value}
+        body_fields.push additional_requestauth_parameters
         
-        tequila_post '/createrequest', body
+        tequila_post '/createrequest', encode_request_body(body_fields)
+      end
+
+      def encode_request_body( body_fields )
+        if (body_fields.kind_of?(Array))
+          return body_fields.map { |fields| encode_request_body(fields) }.join('')
+        end
+        body = ""
+        body_fields.each { |param, value| body += param + "=" + value + "\n" }
+        body
+      end
+
+      def additional_requestauth_parameters
+        @options[:additional_requestauth_parameters].empty? ?
+          @options[:additional_parameters]                  :
+          @options[:additional_requestauth_parameters]
+      end
+
+      def additional_fetchattributes_parameters
+        @options[:additional_fetchattributes_parameters]
       end
 
       # Build a Tequila host with protocol and port
